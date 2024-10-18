@@ -20,7 +20,6 @@ const Canvas = () => {
   const isDrawing = useSelector((state) => state.draw.isDrawing);
   const undoStack = useSelector((state) => state.draw.undoStack);
   const redoStack = useSelector((state) => state.draw.redoStack);
-  
 
   // console.log(undoStack)
   // console.log(redoStack)
@@ -156,7 +155,6 @@ const Canvas = () => {
   };
 
   const handleCanvasClick = (e) => {
-    // Only clear selection if the click is on the canvas, not on a shape
     if (e.target === e.target.getStage()) {
       setSelectedNode(null);
     }
@@ -171,7 +169,6 @@ const Canvas = () => {
 
   const handleTransformEnd = (e) => {
     const node = e.target;
-    console.log(node.attrs);
 
     const updatedShapes = shapes.map((shape) => {
       if (shape.id === selectedNode.index) {
@@ -214,6 +211,31 @@ const Canvas = () => {
   };
 
   // console.log(shapes)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (
+        (e.key === "Delete" || e.key === "Backspace") &&
+        selectedNode !== null
+      ) {
+        dispatch(addToUndoStack());
+
+        const deletedShapes = shapes.filter(
+          (_, index) => index !== selectedNode.index
+        );
+
+        dispatch(setShapes(deletedShapes));
+
+        setSelectedNode(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedNode]);
 
   return (
     <>

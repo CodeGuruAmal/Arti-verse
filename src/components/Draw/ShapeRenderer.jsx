@@ -16,9 +16,10 @@ const ShapeRenderer = ({ onShapeSelect }) => {
     }
   };
 
+  // console.log(shapes)
   return (
     <>
-      {shapes ? shapes.map((item, index) => {
+      {shapes.map((item, index) => {
         let shapeNode = null;
         switch (item.type) {
           case "rectangle":
@@ -151,7 +152,7 @@ const ShapeRenderer = ({ onShapeSelect }) => {
             return null;
         }
         return shapeNode;
-      }) : []}
+      })}
     </>
   );
 };
