@@ -20,7 +20,7 @@ const Canvas = () => {
   const isDrawing = useSelector((state) => state.draw.isDrawing);
   const undoStack = useSelector((state) => state.draw.undoStack);
   const redoStack = useSelector((state) => state.draw.redoStack);
-  const selectedShape = useSelector((state) => state.draw.selectedShape);
+  
 
   // console.log(undoStack)
   // console.log(redoStack)
@@ -66,6 +66,9 @@ const Canvas = () => {
   });
 
   const handleStart = (e) => {
+    // console.log(e.target.getStage().getPointerPosition());
+    // console.log(e.evt)
+
     if (toolSelected !== "mouse") {
       dispatch(addToUndoStack());
       dispatch(setIsDrawing(true));
@@ -73,6 +76,7 @@ const Canvas = () => {
       const { x, y } = transformPointerPosition(pointer);
 
       if (toolSelected === "pencil" && toolSelected !== "hand") {
+        // Handle pencil drawing
         dispatch(
           setShapes([
             ...shapes,
@@ -81,7 +85,6 @@ const Canvas = () => {
               points: [{ x, y }],
               type: toolSelected,
               strokeColor: strokeColor,
-              fillColor: fillColor,
               strokeWidth: strokeWidth,
               rotation: 0,
             },
@@ -107,7 +110,6 @@ const Canvas = () => {
         );
       }
     }
-    // dispatch(setShapes([...shapes, newShape]));
   };
 
   const handleMove = (e) => {
@@ -151,7 +153,6 @@ const Canvas = () => {
 
   const handleShapeSelect = (node) => {
     setSelectedNode(node);
-    console.log(shapes);
   };
 
   const handleCanvasClick = (e) => {
@@ -170,8 +171,8 @@ const Canvas = () => {
 
   const handleTransformEnd = (e) => {
     const node = e.target;
+    console.log(node.attrs);
 
-    console.log(node);
     const updatedShapes = shapes.map((shape) => {
       if (shape.id === selectedNode.index) {
         switch (shape.type) {
@@ -185,17 +186,21 @@ const Canvas = () => {
               rotation: node.rotation(),
             };
 
-          // case "ellipse":
-          //   return {
-          //     x: node.x(),
-          //     y: node.y(),
-          //     width: node.width() * node.scaleX(),
-          //     height: node.height() * node.scaleY(),
-          //     rotation: node.rotation(),
-          //   };
+          case "ellipse":
+            return {
+              ...shape,
+              x: node.x() - node.radiusX() * node.scaleX(),
+              y: node.y() - node.radiusY() * node.scaleY(),
+              width: node.radiusX() * 2 * node.scaleX(),
+              height: node.radiusY() * 2 * node.scaleY(),
+              rotation: node.rotation(),
+            };
 
+          default:
+            return shape;
         }
       }
+
       return shape;
     });
 
@@ -207,28 +212,6 @@ const Canvas = () => {
     dispatch(addToUndoStack());
     dispatch(setShapes(updatedShapes));
   };
-
-  //   // const updatedShapes = shapes.map((shape) => {
-  //   //   if (shape.id === selectedNode.id) {
-  //   //     return {
-  //   //       ...shape,
-  //   //       x: node.x(),
-  //   //       y: node.y(),
-  //   //       width: node.width() * node.scaleX(),
-  //   //       height: node.height() * node.scaleY(),
-  //   //       rotation: node.rotation(),
-  //   //     };
-  //   //   }
-  //   //   return shape;
-  //   // });
-
-  //   // // Reset scale to avoid double scaling during future transformations
-  //   // node.scaleX(1);
-  //   // node.scaleY(1);
-
-  //   // dispatch(setShapes(updatedShapes));
-  //   // dispatch(addToUndoStack()); // Add transformation action to undo stack
-  // };
 
   // console.log(shapes)
 

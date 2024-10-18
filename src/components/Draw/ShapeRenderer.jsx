@@ -64,7 +64,7 @@ const ShapeRenderer = ({ onShapeSelect }) => {
             );
             break;
 
-          case "arrow":
+           case "arrow":
             shapeNode = (
               <Arrow
                 key={index}
@@ -119,6 +119,7 @@ const ShapeRenderer = ({ onShapeSelect }) => {
               />
             );
             break;
+            
 
           case "pencil":
             shapeNode = (
@@ -135,7 +136,7 @@ const ShapeRenderer = ({ onShapeSelect }) => {
                 hitStrokeWidth={30}
                 strokeWidth={item.strokeWidth}
                 lineCap="round"
-                tension={0.5}
+                tension={0.4}
                 lineJoin="round"
                 onClick={() => handleShapeSelect(index)}
                 onTap={() => handleShapeSelect(index)}
